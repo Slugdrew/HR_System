@@ -10,6 +10,7 @@ import time
 import csv
 import re
 from datetime import datetime
+import pandas as pd
 strChoice = '' 
 #lstTbl = []
 dictRow = {}
@@ -21,17 +22,42 @@ strRegexSSN = '^(?!000|666)[0-8][0-9]{2}-(?!00)[0-9]{2}-(?!0000)[0-9]{4}$'
 
 # -- PROCESSING -- #
 class DataProcessor:
-    def append_employee(Name, Address, SSN ,DOB, jobTitle, startDate, empId):
-        dictRow[empId] = [Name, Address, SSN ,DOB, jobTitle, startDate]
+    def append_employee(Name, Address, SSN ,DOB, jobTitle, startDate,EndDate, empId):
+        dictRow[empId] = [Name, Address, SSN ,DOB, jobTitle, startDate, EndDate]
         return dictRow
 
 
 class FileProcessor:
-    def read_file(file_name,table):
-        pass
-    def write_file(file_name,table):
-        pass
-
+    def read_file(file_name,dictRow):
+        with open(file_name) as file:
+            reader = csv.reader(file)
+            dictRow = dict(reader)
+        return dictRow
+    
+    def write_file(file_name,dictRow):
+        columnNames = ['Name', 'Address', 'SSN', 'DOB', 'jobTitle', 'startDate', 'EndDate']
+        (pd.DataFrame.from_dict(data=dictRow, orient='index',)
+         .to_csv(file_name, header=columnNames))
+# ===================================THIS WORKS==========================================
+#         with open(file_name, 'w') as file:  
+#             writer = csv.writer(file)
+#             for key, value in dictRow.items():
+#                writer.writerow([key, value])
+# =============================================================================
+# =============================================================================
+#         fieldnames = ['EmpId','Name', 'Address', 'SSN', 'DOB', 'jobTitle', 'startDate', 'EndDate']
+#         with open(file_name,'w') as file:
+#             writer = csv.DictWriter(file, fieldnames=fieldnames)
+#             writer.writeheader()
+# =============================================================================
+ 
+# =============================================================================
+#         with open(file_name,'w', encoding='UTF8', newline='') as file:
+#             writer = csv.DictWriter(file, fieldnames=fieldnames)
+#             writer.writeheader()
+#             writer.writerow(dictRow)
+#             writer.writerows(zip(*[dictRow[row] for row in dictRow]))
+# =============================================================================
 
 
 
@@ -82,8 +108,8 @@ class IO:
                 break
             except ValueError:
                 print("Incorrect Start Date format, It should be MM-DD-YYYY") 
-                          
-        return strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate, empId 
+        dateEndDate = '00-00-0000'                  
+        return strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate, dateEndDate, empId 
 
 
 # -- PRESENTATION -- #
@@ -104,9 +130,11 @@ class Main:
                 if strChoice == 'x':
                     break
                 elif strChoice == 'a':
-                    strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate,intEmpId = IO.add_new_employee(intEmpId)
+                    strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate,dateEndDate, intEmpId = IO.add_new_employee(intEmpId)
                     DataProcessor.append_employee(strName, strAddress, strSSN 
-                                                  ,dateDOB, strJobTitle, dateStartDate,intEmpId)
+                                                  ,dateDOB, strJobTitle, dateStartDate,dateEndDate, intEmpId)
+                elif strChoice == 's':
+                    FileProcessor.write_file(strFileName, dictRow)
         except KeyboardInterrupt:
             print('\nThe user has caused a keyboard interruption\nThe program will now close!')
             time.sleep(2)

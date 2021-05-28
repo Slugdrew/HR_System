@@ -7,17 +7,18 @@
 # AHernandez, 2021-May-24, Created File for HR System application and skeletal structure 
 # AHernandez, 2021-May-25, Added data structure and input functions 
 # AHernandez, 2021-May-25, Added entering new user, exporting to csv, and printing table
-# AHernandez, 2021-May-25, added exporting table to text as a report  
-# AHernandez, 2021-May-25, Added importing file functionality  
+# AHernandez, 2021-May-26, added exporting table to text as a report  
+# AHernandez, 2021-May-27, Added importing file functionality  
+# AHernandez, 2021-May-28, Added Edit employee functionality
 # ------------------------------------------#
 import time
 import re
 from datetime import datetime 
 import pandas as pd
 import pathlib
-#import numpy as np
 import csv
 from prettytable import PrettyTable
+
 strChoice = '' 
 lstTbl = []
 dictRow = {}
@@ -38,10 +39,10 @@ class DataProcessor:
     def find_current_employee(dictRow):
         try:
             for key, val in dictRow.items():
-                if datetime.today().strftime('%Y-%m-%d') <  val[6] :
                     table = PrettyTable(fieldnames)
                     for key, val in dictRow.items():
-                       table.add_row([key, *val])
+                        if datetime.now() < datetime.strptime(val[6], '%Y-%m-%d'):
+                            table.add_row([key, *val])
             return table 
         except UnboundLocalError:
             print('The table is empty.  There is nothing to print.')   
@@ -49,13 +50,29 @@ class DataProcessor:
     def find_previous_employee(dictRow):
         try:
             for key, val in dictRow.items():
-                if datetime.now() > datetime.strptime(val[6], '%Y-%m-%d'):
                     table = PrettyTable(fieldnames)
                     for key, val in dictRow.items():
-                       table.add_row([key, *val])
-            return table
+                        if datetime.now() > datetime.strptime(val[6], '%Y-%m-%d'):
+                            table.add_row([key, *val])
+            return table 
         except UnboundLocalError:
             print('The table is empty.  There is nothing to print.')
+    
+    def find_emp_record(empOpt,dictRow):
+        try:
+            for key in dictRow.keys():
+                if empOpt == int(key):
+                    empId = int(key)
+            return empId
+        except UnboundLocalError:
+            print(f'Employee Id {empOpt} does not exist')
+            
+    def update_emp_record(Name, Address, SSN ,DOB, jobTitle, startDate,EndDate, empId,dictRow):
+        for key in dictRow.keys():
+            if int(key) == empId:
+                dictRow[key] = [Name, Address, SSN ,DOB, jobTitle, startDate, EndDate]
+        return dictRow
+        
 # -- FILE PROCESSING -- #         
 class FileProcessor:
     def read_file(file_name, dictRow,lstTbl):
@@ -67,9 +84,9 @@ class FileProcessor:
                     tup = line[1],line[2],line[3],line[4],line[5],line[6],line[7]
                     lstTbl = list(tup)
                     dictRow[line[0]] = lstTbl
-
+            print(f'Loading {file_name}: \n')
         except (FileNotFoundError,OSError):
-            print('There is no file with that name.')
+            print(f'There is no file named {file_name}.')
         return dictRow
     
     def write_file(file_name,dictRow):         
@@ -113,7 +130,7 @@ class IO:
         strAddress = input('Enter an employees Address: ').strip()
         
         while True:
-            strSSN = input('Enter a SSN: ').strip() 
+            strSSN = input('Enter a SSN(xxx-xx-xxxx): ').strip() 
             try:
                 if (re.search(strRegexSSN, strSSN)):
                     break
@@ -123,7 +140,7 @@ class IO:
                 print('Please enter a valid SSN in the following format xxx-xx-xxxx')
                 
         while True:
-            dateDOB = input('Enter a Date of Birth: ').strip() 
+            dateDOB = input('Enter a Date of Birth(YYYY-MM-DD): ').strip() 
             try:
                 datetime.strptime(dateDOB, '%Y-%m-%d')
                 break
@@ -133,7 +150,7 @@ class IO:
         strJobTitle = input('Enter a Job Title: ').strip()
         
         while True:
-            dateStartDate = input('Enter a Start Date: ').strip() 
+            dateStartDate = input('Enter a Start Date(YYYY-MM-DD): ').strip() 
             try:
                 datetime.strptime(dateStartDate, '%Y-%m-%d')
                 break
@@ -145,7 +162,54 @@ class IO:
     def export_to_text():
         tblExport = input('Would you like to export this table? (Yes/No) ').strip().lower()
         return tblExport
-        
+    
+    def select_emp_edit():
+        try:
+            edit_emp = int(input('Select an EmployeeId to edit :'))
+            return edit_emp
+        except ValueError:
+            print('Please enter an 10 base value')
+            
+    def edit_curent_employee():                
+            strName = input('Update employee name: ').strip()  
+            strAddress = input('Update employee Address: ').strip()
+            
+            while True:
+                strSSN = input('Update SSN(xxx-xx-xxxx): ').strip() 
+                try:
+                    if (re.search(strRegexSSN, strSSN)):
+                        break
+                    else:
+                        raise
+                except: 
+                    print('Please enter a valid SSN in the following format xxx-xx-xxxx')
+                    
+            while True:
+                dateDOB = input('Update Date of Birth(YYYY-MM-DD): ').strip() 
+                try:
+                    datetime.strptime(dateDOB, '%Y-%m-%d')
+                    break
+                except ValueError:
+                    print("Incorrect DoB format, It should be YYYY-MM-DD")
+                    
+            strJobTitle = input('Update Job Title: ').strip()
+            
+            while True:
+                dateStartDate = input('Update Start Date(YYYY-MM-DD): ').strip() 
+                try:
+                    datetime.strptime(dateStartDate, '%Y-%m-%d')
+                    break
+                except ValueError:
+                    print("Incorrect Start Date format, It should be YYYY-MM-DD") 
+            while True:
+                dateEndDate = input('Update End Date(YYYY-MM-DD): ').strip() 
+                try:
+                    datetime.strptime(dateEndDate, '%Y-%m-%d')
+                    break
+                except ValueError:
+                    print("Incorrect End Date format, It should be YYYY-MM-DD")                  
+            return strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate, dateEndDate       
+            
 # -- PRESENTATION -- #
 class Presentation:    
     def file_status():
@@ -187,7 +251,6 @@ class Main:
                     strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate,dateEndDate, intEmpId = IO.add_new_employee(intEmpId)
                     DataProcessor.append_employee(strName, strAddress, strSSN 
                                                   ,dateDOB, strJobTitle, dateStartDate,dateEndDate, intEmpId)
-                    print(dictRow)
                 elif strChoice == 's':
                     FileProcessor.write_file(strFileName, dictRow)
                 elif strChoice == 'l':
@@ -205,7 +268,13 @@ class Main:
                         tblExport = IO.export_to_text()
                         FileProcessor.export_previous_table(tblExport,ptable)
                 elif strChoice == 'e':
-                    pass
+                    ptable = DataProcessor.find_current_employee(dictRow)
+                    Presentation.show_current_employee(ptable)
+                    edit_emp = IO.select_emp_edit()
+                    intEmpId = DataProcessor.find_emp_record(edit_emp, dictRow)
+                    if intEmpId != None:
+                        strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate,dateEndDate = IO.edit_curent_employee()
+                        DataProcessor.update_emp_record(strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate,dateEndDate,intEmpId,dictRow) 
         except KeyboardInterrupt:
             print('\nThe user has caused a keyboard interruption\nThe program will now close!')
             time.sleep(2)

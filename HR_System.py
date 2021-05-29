@@ -10,6 +10,7 @@
 # AHernandez, 2021-May-26, added exporting table to text as a report  
 # AHernandez, 2021-May-27, Added importing file functionality  
 # AHernandez, 2021-May-28, Added Edit employee functionality
+# AHernandez, 2021-May-29, Added Review Report and export
 # ------------------------------------------#
 import time
 import re
@@ -22,7 +23,7 @@ from prettytable import PrettyTable
 strChoice = '' 
 lstTbl = []
 dictRow = {}
-menuOptions = '\nMenu:\n\t[R] Create a Report\n\t[L] Load Employee File\n\t[S] Save Current List\n\t[C] Current Employees \
+menuOptions = '\nMenu:\n\t[R] Create Upcoming Review Report\n\t[L] Load Employee File\n\t[S] Save Current List\n\t[C] Current Employees \
                 \n\t[P] Previous Employees\n\t[A] Add Employee\n\t[E] Edit Current Employee\n\t[X] Quit'
 strMenuOption = 'r','l','s','c','p','a','e','x'
 strFileName = 'Employee.csv'
@@ -72,7 +73,18 @@ class DataProcessor:
             if int(key) == empId:
                 dictRow[key] = [Name, Address, SSN ,DOB, jobTitle, startDate, EndDate]
         return dictRow
-        
+    
+    def create_review_report(dicRow):
+        try:
+            for key, val in dictRow.items():
+                    table = PrettyTable(fieldnames)
+                    for key, val in dictRow.items():
+                        if 0 <= (datetime.now().month - datetime.strptime(val[5], '%Y-%m-%d').month) <= 3 and datetime.now() < datetime.strptime(val[6], '%Y-%m-%d'):
+                            table.add_row([key, *val])
+            return table 
+        except UnboundLocalError:
+            print('The table is empty.  There is nothing to print.')    
+            
 # -- FILE PROCESSING -- #         
 class FileProcessor:
     def read_file(file_name, dictRow,lstTbl):
@@ -109,7 +121,12 @@ class FileProcessor:
     def export_previous_table(tblex, table):
         if tblex == 'yes':
             with open('PreviousEmployeeTable.txt', 'w') as table_export:
-                table_export.write(str(table))        
+                table_export.write(str(table)) 
+                
+    def export_review_report(tblex, table):
+        if tblex == 'yes':
+            with open('UpcomingReviewReport.txt', 'w') as table_export:
+                table_export.write(str(table))   
 
 # -- INPUT/OUTPUT -- #
 class IO:
@@ -229,8 +246,8 @@ class Presentation:
         if table != None:
             print (table)                
 
-    def ask_change_emp():
-        pass
+    def review_message():
+        print('\nCurrent employee(s) that are due for a review.  Be Generous!!!')
 # -- Main -- #
 class Main:    
     def main():
@@ -275,6 +292,14 @@ class Main:
                     if intEmpId != None:
                         strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate,dateEndDate = IO.edit_curent_employee()
                         DataProcessor.update_emp_record(strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate,dateEndDate,intEmpId,dictRow) 
+                elif strChoice == 'r':
+                    ptable = DataProcessor.create_review_report(dictRow)
+                    Presentation.review_message()
+                    Presentation.show_current_employee(ptable)
+                    if ptable != None:
+                        tblExport = IO.export_to_text()
+                        FileProcessor.export_review_report(tblExport,ptable)
+                    
         except KeyboardInterrupt:
             print('\nThe user has caused a keyboard interruption\nThe program will now close!')
             time.sleep(2)

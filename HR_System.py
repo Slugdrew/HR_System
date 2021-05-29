@@ -35,15 +35,16 @@ ptable = ''
 class DataProcessor:
     def append_employee(Name, Address, SSN ,DOB, jobTitle, startDate,EndDate, empId):
         dictRow[empId] = [Name, Address, SSN ,DOB, jobTitle, startDate, EndDate]
+        print(dictRow)
         return dictRow
     
     def find_current_employee(dictRow):
         try:
             for key, val in dictRow.items():
-                    table = PrettyTable(fieldnames)
-                    for key, val in dictRow.items():
-                        if datetime.now() < datetime.strptime(val[6], '%Y-%m-%d'):
-                            table.add_row([key, *val])
+                table = PrettyTable(fieldnames)
+                for key, val in dictRow.items():
+                    if datetime.now() < datetime.strptime(val[6], '%Y-%m-%d'):
+                        table.add_row([key, *val])
             return table 
         except UnboundLocalError:
             print('The table is empty.  There is nothing to print.')   
@@ -51,10 +52,10 @@ class DataProcessor:
     def find_previous_employee(dictRow):
         try:
             for key, val in dictRow.items():
-                    table = PrettyTable(fieldnames)
-                    for key, val in dictRow.items():
-                        if datetime.now() > datetime.strptime(val[6], '%Y-%m-%d'):
-                            table.add_row([key, *val])
+                table = PrettyTable(fieldnames)
+                for key, val in dictRow.items():
+                    if datetime.now() > datetime.strptime(val[6], '%Y-%m-%d'):
+                        table.add_row([key, *val])
             return table 
         except UnboundLocalError:
             print('The table is empty.  There is nothing to print.')
@@ -77,10 +78,10 @@ class DataProcessor:
     def create_review_report(dicRow):
         try:
             for key, val in dictRow.items():
-                    table = PrettyTable(fieldnames)
-                    for key, val in dictRow.items():
-                        if 0 <= (datetime.now().month - datetime.strptime(val[5], '%Y-%m-%d').month) <= 3 and datetime.now() < datetime.strptime(val[6], '%Y-%m-%d'):
-                            table.add_row([key, *val])
+                table = PrettyTable(fieldnames)
+                for key, val in dictRow.items():
+                    if 0 <= (datetime.now().month - datetime.strptime(val[5], '%Y-%m-%d').month) <= 3 and datetime.now() < datetime.strptime(val[6], '%Y-%m-%d'):
+                        table.add_row([key, *val])
             return table 
         except UnboundLocalError:
             print('The table is empty.  There is nothing to print.')    

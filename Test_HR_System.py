@@ -5,6 +5,7 @@
 # Desc: Assignment HR System - Create test cases for the HR System application
 # Change Log: (Who, When, What)
 # AHernandez, 2021-May-24, Created Unit Test File for HR System application
+# AHernandez, 2021-May-29, Added more test cases to Test Harness
 # ------------------------------------------#
 import HR_System
 from io import StringIO

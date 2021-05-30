@@ -174,7 +174,7 @@ class IO:
                 break
             except ValueError:
                 print("Incorrect Start Date format, It should be YYYY-MM-DD") 
-        dateEndDate = '2100-01-01'                 
+        dateEndDate = '2100-01-01'               
         return strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate, dateEndDate, empId
     
     def export_to_text():

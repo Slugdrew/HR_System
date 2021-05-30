@@ -188,45 +188,46 @@ class IO:
         except ValueError:
             print('Please enter an 10 base value')
             
-    def edit_curent_employee():                
-            strName = input('Update employee name: ').strip()  
-            strAddress = input('Update employee Address: ').strip()
-            
-            while True:
-                strSSN = input('Update SSN(xxx-xx-xxxx): ').strip() 
-                try:
-                    if (re.search(strRegexSSN, strSSN)):
-                        break
-                    else:
-                        raise
-                except: 
-                    print('Please enter a valid SSN in the following format xxx-xx-xxxx')
+    def edit_curent_employee():
                     
-            while True:
-                dateDOB = input('Update Date of Birth(YYYY-MM-DD): ').strip() 
-                try:
-                    datetime.strptime(dateDOB, '%Y-%m-%d')
+        strName = input('Update employee name: ').strip()  
+        strAddress = input('Update employee Address: ').strip()
+        
+        while True:
+            strSSN = input('Update SSN(xxx-xx-xxxx): ').strip() 
+            try:
+                if (re.search(strRegexSSN, strSSN)):
                     break
-                except ValueError:
-                    print("Incorrect DoB format, It should be YYYY-MM-DD")
-                    
-            strJobTitle = input('Update Job Title: ').strip()
-            
-            while True:
-                dateStartDate = input('Update Start Date(YYYY-MM-DD): ').strip() 
-                try:
-                    datetime.strptime(dateStartDate, '%Y-%m-%d')
-                    break
-                except ValueError:
-                    print("Incorrect Start Date format, It should be YYYY-MM-DD") 
-            while True:
-                dateEndDate = input('Update End Date(YYYY-MM-DD): ').strip() 
-                try:
-                    datetime.strptime(dateEndDate, '%Y-%m-%d')
-                    break
-                except ValueError:
-                    print("Incorrect End Date format, It should be YYYY-MM-DD")                  
-            return strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate, dateEndDate       
+                else:
+                    raise
+            except: 
+                print('Please enter a valid SSN in the following format xxx-xx-xxxx')
+                
+        while True:
+            dateDOB = input('Update Date of Birth(YYYY-MM-DD): ').strip() 
+            try:
+                datetime.strptime(dateDOB, '%Y-%m-%d')
+                break
+            except ValueError:
+                print("Incorrect DoB format, It should be YYYY-MM-DD")
+                
+        strJobTitle = input('Update Job Title: ').strip()
+        
+        while True:
+            dateStartDate = input('Update Start Date(YYYY-MM-DD): ').strip() 
+            try:
+                datetime.strptime(dateStartDate, '%Y-%m-%d')
+                break
+            except ValueError:
+                print("Incorrect Start Date format, It should be YYYY-MM-DD") 
+        while True:
+            dateEndDate = input('Update End Date(YYYY-MM-DD): ').strip() 
+            try:
+                datetime.strptime(dateEndDate, '%Y-%m-%d')
+                break
+            except ValueError:
+                print("Incorrect End Date format, It should be YYYY-MM-DD")                  
+        return strName, strAddress, strSSN ,dateDOB, strJobTitle, dateStartDate, dateEndDate       
             
 # -- PRESENTATION -- #
 class Presentation:    

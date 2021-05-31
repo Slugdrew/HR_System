@@ -35,7 +35,6 @@ ptable = ''
 class DataProcessor:
     def append_employee(Name, Address, SSN ,DOB, jobTitle, startDate,EndDate, empId):
         dictRow[empId] = [Name, Address, SSN ,DOB, jobTitle, startDate, EndDate]
-        print(dictRow)
         return dictRow
     
     def find_current_employee(dictRow):
@@ -142,8 +141,8 @@ class IO:
             print("Ivalid option selected. Please try again\n")
             
     def add_new_employee(empId):
-        for row in dictRow:
-            empId += 1
+        
+        empId = len(dictRow) + 1 
         strName = input('Enter an employees name: ').strip()  
         strAddress = input('Enter an employees Address: ').strip()
         
